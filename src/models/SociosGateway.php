@@ -34,4 +34,52 @@ class SociosGateway{
         $stmt ->execute();
         return $this->conn->lastInsertId();
     }
+
+
+    public function get(string $id) : array | false {
+        $sql = "SELECT * FROM socio WHERE id = :id";
+        $stmt= $this->conn->prepare($sql);
+        $stmt->bindValue(':id',$id,PDO::PARAM_INT);
+        $stmt -> execute();
+        $data = $stmt -> fetch(PDO::FETCH_ASSOC);
+
+        if($data !== false){
+            $data["penalizado"]=(bool)$data["penalizado"];
+        }
+
+        return $data;
+    }
+
+
+    public function update(array $current , array $new){
+        $sql="UPDATE socio SET nombre = :nombre ,
+         telefono = :telefono , edad = :edad ,
+         penalizado = :penalizado WHERE id = :id";
+
+         $stmt = $this->conn->prepare($sql);
+
+         $stmt ->bindValue(":nombre",$new["nombre"] ?? $current["nombre"], PDO::PARAM_STR);
+         $stmt ->bindValue(":telefono",$new["telefono"] ?? $current["telefono"], PDO::PARAM_STR);
+         $stmt ->bindValue(":edad",$new["edad"] ?? $current["edad"], PDO::PARAM_INT);
+         $stmt ->bindValue(":penalizado",$new["penalizado"] ?? $current["penalizado"], PDO::PARAM_BOOL);
+     
+         $stmt -> bindValue(":id" , $current["id"] , PDO::PARAM_INT);
+
+         $stmt -> execute();
+         return $stmt->rowCount() ;
+
+
+    }    
+
+
+    public function delete (string $id) : int{
+        $sql ="DELETE FROM socio WHERE id = :id ";
+
+        $stmt=$this->conn->prepare($sql);
+
+        $stmt ->bindValue(":id" , $id , PDO::PARAM_INT);
+
+        $stmt->execute();
+        return  $stmt->rowCount();
+    }
 }

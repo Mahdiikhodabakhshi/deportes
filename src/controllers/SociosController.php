@@ -15,7 +15,66 @@ class SociosController{
     }
 
     private function processResurcesRequest(string $method , string $id) : void {
-        echo "resurces" ;
+        $socio = $this->sociosGateway->get($id);
+
+        if(!$socio){
+            http_response_code(404); // not found
+            echo json_encode(['error' => 'Socio not founded']);
+            return;
+        }
+
+        switch($method){
+            case "GET":
+                echo json_encode($socio);
+                break;
+
+
+
+                
+            case "DELETE":
+                $rows = $this->sociosGateway->delete($id);
+
+                echo json_encode([
+                    "message" =>"socio $id deleted",
+                    "deleted rows"=>$rows
+                ]);
+                break;
+
+
+
+            case "PATCH":
+                $data = (array) json_decode(file_get_contents("php://input"),true);
+                $errors = $this->getValidationError($data,false);
+
+                if(!empty($errors)){
+                    http_response_code(422); // unproccesable entity
+                    echo json_encode(["errors"=>$errors]);
+                    break;
+                }
+
+                $rows = $this->sociosGateway->update($socio,$data);
+
+
+                echo json_encode([
+                    "message" => "socio $id updated",
+                    "updatedRows" => $rows
+                ]);
+
+
+
+
+
+                break;
+            default:
+            http_response_code(405); // method not implemented
+            header("Allow:GET,PATCH,DELETE");
+
+        }
+
+
+
+
+
     }
     private function processCollectionRequest(string $method ) : void {
         switch($method){
@@ -24,7 +83,7 @@ class SociosController{
                 break;
             case 'POST':
                 $data = (array) json_decode(file_get_contents("php://input" , true));
-
+               
                 $errors = $this->getValidationError($data);
 
                 if(!empty($errors)){
@@ -54,13 +113,13 @@ class SociosController{
 
 
 
-    private function getValidationError(array $data) : array{
+    private function getValidationError(array $data , bool $is_new = true) : array{
         $errors = [];
 
         //-------------------- name validation -------------------------
 
 
-        if(empty($data["nombre"])){
+        if($is_new && empty($data["nombre"])){
             $errors[] = 'name is required';
         }
         
@@ -77,7 +136,7 @@ class SociosController{
 
         if(array_key_exists('telefono', $data)){
             if(intval($data['telefono']) + 0 === 0 || $data['telefono'] === 0 ){
-                $errors[] = 'telefon must be an INTEGER';
+                $errors[] = 'telefono must be an INTEGER';
             }
         }
         //--------------------------- age validation -----------------
