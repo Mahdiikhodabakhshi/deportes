@@ -47,7 +47,7 @@ class SociosController{
                 $errors = $this->getValidationError($data,false);
 
                 if(!empty($errors)){
-                    http_response_code(422); // unproccesable entity
+                    http_response_code(422); // unprocessable entity
                     echo json_encode(["errors"=>$errors]);
                     break;
                 }
