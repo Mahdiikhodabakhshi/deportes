@@ -56,15 +56,15 @@ class ReservasGateway{
 
     public function update(array $current , array $new){
         $sql="UPDATE reserva SET socio = :socio ,
-         pista = :pista , fecha = :fecha ,hora = :hora 
+         pista = :pista , fecha = :fecha ,hora = :hora ,
          iluminar = :iluminar WHERE id = :id";
 
          $stmt = $this->conn->prepare($sql);
 
          $stmt ->bindValue(":socio",$new["socio"] ?? $current["socio"], PDO::PARAM_INT);
          $stmt ->bindValue(":pista",$new["pista"] ?? $current["pista"], PDO::PARAM_INT);
-         $stmt ->bindValue(":pista",$new["fecha"] ?? $current["fecha"], PDO::PARAM_STR);
-         $stmt ->bindValue(":edad",$new["hora"] ?? $current["hora"], PDO::PARAM_INT);
+         $stmt ->bindValue(":fecha",$new["fecha"] ?? $current["fecha"], PDO::PARAM_STR);
+         $stmt ->bindValue(":hora",$new["hora"] ?? $current["hora"], PDO::PARAM_INT);
          $stmt ->bindValue(":iluminar",$new["iluminar"] ?? $current["iluminar"], PDO::PARAM_BOOL);
      
          $stmt -> bindValue(":id" , $current["id"] , PDO::PARAM_INT);

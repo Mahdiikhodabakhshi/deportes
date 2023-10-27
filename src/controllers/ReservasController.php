@@ -85,7 +85,7 @@ class ReservasController{
             case 'POST':
                 $data = (array) json_decode(file_get_contents('php://input'), true);
 
-                $errors = $this->getValidationError($data);
+               // $errors = $this->getValidationError($data);
 
                 if(!empty($errors)){
                     http_response_code(422); // unprocessable entity

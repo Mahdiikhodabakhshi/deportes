@@ -116,45 +116,50 @@ class SociosController{
     private function getValidationError(array $data , bool $is_new = true) : array{
         $errors = [];
 
-        //-------------------- name validation -------------------------
+        if(!$data ){
+            $errors[] = 'data formation is not correct ';
+        }else{
+                //-------------------- name validation -------------------------
+            
+
+            if($is_new && empty($data["nombre"])){
+                $errors[] = 'name is required';
+            }
+            
+            if(array_key_exists('nombre', $data)){
+                $name = intval($data["nombre"]);
+
+                if($name + 5 !==5){
+                    $errors[] = 'name most be a String';
+                }
+            }
 
 
-        if($is_new && empty($data["nombre"])){
-            $errors[] = 'name is required';
-        }
-        
-        if(array_key_exists('nombre', $data)){
-            $name = intval($data["nombre"]);
+            //----------------- telefon validation -------------------
 
-            if($name + 5 !==5){
-                $errors[] = 'name most be a String';
+            if(array_key_exists('telefono', $data)){
+                if(intval($data['telefono']) + 0 === 0 || $data['telefono'] === 0 ){
+                    $errors[] = 'telefono must be an INTEGER';
+                }
+            }
+            //--------------------------- age validation -----------------
+
+            if(array_key_exists('edad', $data)){
+                if(filter_var($data['edad'] , FILTER_VALIDATE_INT) === false){
+                    $errors[] = 'Age must be an INTEGER';
+                }
+            }
+
+
+            //-------------- penalizado validation --------------------------
+
+            if(array_key_exists('penalizado', $data)){
+                if(!is_bool($data['penalizado'])){
+                    $errors[] = 'penalized must be BOOLEAN';
+                }
             }
         }
-
-
-        //----------------- telefon validation -------------------
-
-        if(array_key_exists('telefono', $data)){
-            if(intval($data['telefono']) + 0 === 0 || $data['telefono'] === 0 ){
-                $errors[] = 'telefono must be an INTEGER';
-            }
-        }
-        //--------------------------- age validation -----------------
-
-        if(array_key_exists('edad', $data)){
-            if(filter_var($data['edad'] , FILTER_VALIDATE_INT) === false){
-                $errors[] = 'Age must be an INTEGER';
-            }
-        }
-
-
-        //-------------- penalizado validation --------------------------
-
-        if(array_key_exists('penalizado', $data)){
-            if(filter_var($data['penalizado'] , FILTER_VALIDATE_BOOL) === false){
-                $errors[] = 'penalizado must be BOOLEAN';
-            }
-        }
+       
 
 
 

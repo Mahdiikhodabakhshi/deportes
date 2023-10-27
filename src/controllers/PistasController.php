@@ -118,33 +118,81 @@ class PistasController{
     private function getValidationError(array $data , bool $is_new=true) : array{
         $errors = [];
 
-        //-------------------- name validation -------------------------
-        if ($is_new && empty($data["name"])) {
-
-            $errors[] = "name is required";
-            
+        if(!$data ){
+            $errors[] = 'data formation is not correct ';
+        }else{
+            //-------------------- NAME validation -------------------------
+            if($is_new && empty($data["nombre"])){
+                $errors[] = 'name is required';
             }
-        //TODO
+            
+            if(array_key_exists('nombre', $data)){
+                $name = intval($data["nombre"]);
 
-
-        //----------------- telefon validation -------------------
-
-        //TODO
-        //--------------------------- age validation -----------------
-
+                if($name + 5 !==5){
+                    $errors[] = 'NAME most be a String';
+                }
+            }
         
-        //TODO
 
-        //-------------- penalizado validation --------------------------
 
-        
-        //TODO
+            //----------------- TYPE validation -------------------
+
+            if($is_new && empty($data["tipo"])){
+                $errors[] = 'name is required';
+            }
+            
+            if(array_key_exists('tipo', $data)){
+                $type = intval($data["tipo"]);
+
+                if($type + 5 !==5){
+                    $errors[] = 'TYPE most be a String';
+                }
+            }
+            //--------------------------- MAX_PLAYER validation -----------------
+
+            
+            if(array_key_exists('max_jugadores', $data)){
+                if(filter_var($data['max_jugadores'] , FILTER_VALIDATE_INT) === false){
+                    $errors[] = 'MAX_PLAYER must be an INTEGER';
+                }
+            }
+
+            //-------------- DISPONIBLE validation --------------------------
+
+            
+            if(array_key_exists('disponible', $data)){
+                if(!is_bool($data['disponible'])){
+                    $errors[] = 'DISPONIBLE must be BOOLEAN';
+                }
+            }
+        }
 
 
 
         return $errors;
 
     }
+
+
+
+
+    //TODO
+    /*
+    public function stringValidation(array $data , string $value ,?bool $is_new){
+        if($is_new && empty($data[$value])){
+            $errors[] = 'name is required';
+        }
+        
+        if(array_key_exists($value, $data)){
+            $type = intval($data[$value]);
+
+            if($type + 5 !==5){
+                $errors[] = 'type most be a String';
+            }
+        }
+    }
+    */
 
 
 
