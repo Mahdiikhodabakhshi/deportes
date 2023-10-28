@@ -20,7 +20,7 @@ class ReservasController{
 
         if(!$reserva){
             http_response_code(404); // not found
-            echo json_encode(['error' => 'reserva not founded']);
+            echo json_encode(['error' => 'reserve not founded']);
             return;
         }
 
@@ -35,7 +35,7 @@ class ReservasController{
                 $rows = $this->reservasGateway->delete($id);
 
                 echo json_encode([
-                    "message" =>"socio $id deleted",
+                    "message" =>"RESERVE $id deleted",
                     "deleted rows"=>$rows
                 ]);
                 
@@ -57,7 +57,7 @@ class ReservasController{
 
 
                 echo json_encode([
-                    "message" => "socio $id updated",
+                    "message" => "RESERVE $id updated",
                     "updatedRows" => $rows
                 ]);
 
@@ -84,8 +84,7 @@ class ReservasController{
                 break;
             case 'POST':
                 $data = (array) json_decode(file_get_contents('php://input'), true);
-
-               // $errors = $this->getValidationError($data);
+                $errors = $this->getValidationError($data);
 
                 if(!empty($errors)){
                     http_response_code(422); // unprocessable entity
@@ -93,15 +92,27 @@ class ReservasController{
                     echo json_encode(["errors" => $errors]);
                     break;
                 }
+                    
 
-                $id = $this->reservasGateway->create($data);
+                    
+                (array) json_decode( file_get_contents("http://localhost/deportes/socios/".$data["socio"] )  ) ;
+                (array) json_decode(file_get_contents("http://localhost/deportes/pistas/".$data["pista"]))  ;
+                
 
-                http_response_code(201); // elemento creado
+            
+                       $id = $this->reservasGateway->create($data);
 
-                echo json_encode([
-                    'message' =>'Reserva creado',
-                    'id' => $id
-                ]);
+                            http_response_code(201); // elemento creado
+
+                            echo json_encode([
+                                'message' =>'Reserva creado',
+                                'id' => $id
+                            ]);
+
+                
+               
+               
+
                 break;
             default:
                 http_response_code(405); //method not allowed
@@ -114,30 +125,81 @@ class ReservasController{
     private function getValidationError(array $data ,bool $is_new = true) : array{
         $errors = [];
 
-        //-------------------- name validation -------------------------
+        if(!$data ){
+            $errors[] = 'data formation is not correct ';
+        }else{
 
-        if ($is_new && empty($data["name"])) {
+                //-------------------- MEMBER & COURT validation -------------------------
 
-            $errors[] = "name is required";
-            
-            }
-        //TODO
+                if($is_new && empty($data["socio"]) ){
+                    $errors[] = 'MEMBER is required';
+                }
+                if ( array_key_exists( "socio", $data)) {
+
+                    if ( filter_var($data["socio"], FILTER_VALIDATE_INT) === false ) {
+                    
+                    $errors[] = "MEMBER must be an integer";
+                    
+                    }
+                    
+                    }
+                
+                if($is_new && empty($data['pista'])){
+                    $errors[] = 'COURT is required';
+                }
+                if ( array_key_exists( "pista", $data)) {
+
+                    if ( !is_int($data["pista"]) ) {
+                    
+                    $errors[] = "COURT must be an integer";
+                    
+                    }
+                    
+                    }
+                
 
 
-        //----------------- telefon validation -------------------
+                //----------------- DATE validation -------------------
 
-        //TODO
-        //--------------------------- age validation -----------------
+                if($is_new && empty($data['fecha'])){
+                    $errors[] = 'DATE is required';
+                }
+                if ( array_key_exists( "fecha", $data)) {
+                    $x = intval($data["fecha"]);
+                    if ( $x === 0 ) {
+                    
+                    $errors[] = "DATE must be a string of numbers";
+                    
+                    }
+                    
+                    }
+                
+                //--------------------------- TIME validation -----------------
 
-        
-        //TODO
 
-        //-------------- penalizado validation --------------------------
+                if(array_key_exists('hora', $data)){
+                    if(!is_int($data['hora'])){
+                        $errors[] = 'TIME must be an INTEGER';
+                    }
+                    if( $data['hora'] < 0 || $data['hora'] > 24){
+                        $errors[] = 'Time must be an number between 0-24';
+                    }
+                }
+    
 
-        
-        //TODO
+                //-------------- LIGHT UP validation --------------------------
 
 
+                if(array_key_exists('iluminar', $data)){
+                    if(!is_bool($data['iluminar'])){
+                        $errors[] = 'LIGHT UP must be BOOLEAN';
+                    }
+                }
+
+
+
+        }
+       
 
         return $errors;
 

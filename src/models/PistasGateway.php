@@ -51,8 +51,8 @@ class PistasGateway{
 
     public function update(array $current , array $new){
         $sql="UPDATE pista SET nombre = :nombre ,
-         tipo = :tipo , max_jugadores = :max_jugadores , 
-         disponible = :disponible 
+         tipo = :tipo , max_jugadores = :max_jugadores ,
+         disponible = :disponible
           WHERE id = :id";
 
          $stmt = $this->conn->prepare($sql);

@@ -139,7 +139,7 @@ class PistasController{
             //----------------- TYPE validation -------------------
 
             if($is_new && empty($data["tipo"])){
-                $errors[] = 'name is required';
+                $errors[] = 'TYPE is required';
             }
             
             if(array_key_exists('tipo', $data)){
@@ -158,12 +158,12 @@ class PistasController{
                 }
             }
 
-            //-------------- DISPONIBLE validation --------------------------
+            //-------------- AVAILABLE validation --------------------------
 
             
             if(array_key_exists('disponible', $data)){
                 if(!is_bool($data['disponible'])){
-                    $errors[] = 'DISPONIBLE must be BOOLEAN';
+                    $errors[] = 'AVAILABLE  must be BOOLEAN';
                 }
             }
         }

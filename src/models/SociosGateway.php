@@ -69,7 +69,7 @@ class SociosGateway{
          return $stmt->rowCount() ;
 
 
-    }    
+    }
 
 
     public function delete (string $id) : int{

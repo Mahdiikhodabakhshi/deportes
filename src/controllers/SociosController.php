@@ -16,7 +16,7 @@ class SociosController{
 
     private function processResurcesRequest(string $method , string $id) : void {
         $socio = $this->sociosGateway->get($id);
-
+        
         if(!$socio){
             http_response_code(404); // not found
             echo json_encode(['error' => 'Socio not founded']);
@@ -44,6 +44,8 @@ class SociosController{
 
             case "PATCH":
                 $data = (array) json_decode(file_get_contents("php://input"),true);
+
+                
                 $errors = $this->getValidationError($data,false);
 
                 if(!empty($errors)){
