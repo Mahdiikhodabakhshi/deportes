@@ -53,14 +53,28 @@ class ReservasController{
                     break;
                 }
 
-                $rows = $this->reservasGateway->update($reserva,$data);
+                $existedSocio = $this->reservasGateway->existedSocio($data["socio"]);
+                $existedPista = $this->reservasGateway->existedPista($data["pista"]);
 
-
-                echo json_encode([
-                    "message" => "RESERVE $id updated",
-                    "updatedRows" => $rows
-                ]);
-
+                if(!$existedSocio){
+                    http_response_code(404); // not found
+                    echo json_encode(['error' => 'Member ID is not registered']);
+                    return;
+                }else{
+                    
+                        if(!$existedPista){
+                        http_response_code(404); // not found
+                        echo json_encode(['error' => 'Court ID is not existed']);
+                        return;
+                         }else{
+                                $rows = $this->reservasGateway->update($reserva,$data);
+                                echo json_encode([
+                                    "message" => "RESERVE $id updated",
+                                    "updatedRows" => $rows
+                                ]);
+                        }
+                    
+                }
                 break;
 
                 
@@ -93,26 +107,33 @@ class ReservasController{
                     break;
                 }
                     
+                $existedSocio = $this->reservasGateway->existedSocio($data["socio"]);
+                $existedPista = $this->reservasGateway->existedPista($data["pista"]);
 
+
+                if(!$existedSocio){
+                    http_response_code(404); // not found
+                    echo json_encode(['error' => 'Member ID is not registered']);
+                    return;
+                }else{
                     
-                (array) json_decode( file_get_contents("http://localhost/deportes/socios/".$data["socio"] )  ) ;
-                (array) json_decode(file_get_contents("http://localhost/deportes/pistas/".$data["pista"]))  ;
+                        if(!$existedPista){
+                        http_response_code(404); // not found
+                        echo json_encode(['error' => 'Court ID is not existed']);
+                        return;
+                         }else{
+                                $id = $this->reservasGateway->create($data);
+
+                                http_response_code(201); // elemento creado
+
+                                echo json_encode([
+                                    'message' =>'Reserva creado',
+                                    'id' => $id
+                                ]);
+                        }
+                    
+                }
                 
-
-            
-                       $id = $this->reservasGateway->create($data);
-
-                            http_response_code(201); // elemento creado
-
-                            echo json_encode([
-                                'message' =>'Reserva creado',
-                                'id' => $id
-                            ]);
-
-                
-               
-               
-
                 break;
             default:
                 http_response_code(405); //method not allowed
@@ -135,7 +156,9 @@ class ReservasController{
                     $errors[] = 'MEMBER is required';
                 }
                 if ( array_key_exists( "socio", $data)) {
-
+                
+                        
+                 
                     if ( filter_var($data["socio"], FILTER_VALIDATE_INT) === false ) {
                     
                     $errors[] = "MEMBER must be an integer";
@@ -149,6 +172,7 @@ class ReservasController{
                 }
                 if ( array_key_exists( "pista", $data)) {
 
+                    
                     if ( !is_int($data["pista"]) ) {
                     
                     $errors[] = "COURT must be an integer";

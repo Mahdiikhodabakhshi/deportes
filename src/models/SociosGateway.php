@@ -50,6 +50,22 @@ class SociosGateway{
         return $data;
     }
 
+    public function idEnReserva(int $idSocio) : Array {
+        $sql = "SELECT socio FROM reserva";
+        $stmt = $this->conn->query($sql);
+        $data=[];
+        while($row=$stmt->fetch(PDO::FETCH_ASSOC) ){
+           if($row["socio"] == $idSocio){
+            $data[]=$row;
+           }
+        }
+      
+
+
+        return $data;
+
+
+    }
 
     public function update(array $current , array $new){
         $sql="UPDATE socio SET nombre = :nombre ,
@@ -73,6 +89,11 @@ class SociosGateway{
 
 
     public function delete (string $id) : int{
+       
+       $existed= $this->get($id);
+       if(!$existed){
+        
+       }
         $sql ="DELETE FROM socio WHERE id = :id ";
 
         $stmt=$this->conn->prepare($sql);

@@ -32,12 +32,21 @@ class SociosController{
 
                 
             case "DELETE":
+
+                $idEnReserva = $this->sociosGateway->idEnReserva($id);
+                
+                if($idEnReserva){
+                    http_response_code(404); // not found
+                    echo json_encode(['error' => 'Member has a reserve']);
+                    return;
+                }else{
                 $rows = $this->sociosGateway->delete($id);
 
                 echo json_encode([
                     "message" =>"socio $id deleted",
                     "deleted rows"=>$rows
                 ]);
+                }
                 break;
 
 
@@ -45,7 +54,7 @@ class SociosController{
             case "PATCH":
                 $data = (array) json_decode(file_get_contents("php://input"),true);
 
-                
+
                 $errors = $this->getValidationError($data,false);
 
                 if(!empty($errors)){

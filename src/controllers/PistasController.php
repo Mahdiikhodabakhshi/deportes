@@ -31,13 +31,20 @@ class PistasController{
 
 
             case "DELETE":
-                $rows = $this->pistasGateway->delete($id);
-
-                echo json_encode([
-                    "message" =>"socio $id deleted",
-                    "deleted rows"=>$rows
-                ]);
+                $idEnReserva = $this->pistasGateway->idEnReserva($id);
                 
+                if($idEnReserva){
+                    http_response_code(404); // not found
+                    echo json_encode(['error' => 'Court has a reserve']);
+                    return;
+                }else{
+                        $rows = $this->pistasGateway->delete($id);
+
+                        echo json_encode([
+                            "message" =>"Court $id deleted",
+                            "deleted rows"=>$rows
+                        ]);
+                    }
                 break;
 
 

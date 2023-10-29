@@ -81,4 +81,21 @@ class PistasGateway{
         $stmt->execute();
         return  $stmt->rowCount();
     }
+
+    public function idEnReserva(int $idPista) : Array {
+        $sql = "SELECT pista FROM reserva";
+        $stmt = $this->conn->query($sql);
+        $data=[];
+        while($row=$stmt->fetch(PDO::FETCH_ASSOC) ){
+           if($row["pista"] === $idPista){
+            $data[]=$row;
+           }
+        }
+      
+
+
+        return $data;
+
+
+    }
 }

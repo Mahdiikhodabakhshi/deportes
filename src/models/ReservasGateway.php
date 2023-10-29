@@ -20,6 +20,39 @@ class ReservasGateway{
 
     }
 
+    public function existedSocio(int $idSocio) : Array {
+        $sql = "SELECT id FROM socio";
+        $stmt = $this->conn->query($sql);
+        $data=[];
+        while($row=$stmt->fetch(PDO::FETCH_ASSOC) ){
+           if($row["id"] === $idSocio){
+            $data[]=$row;
+           }
+        }
+      
+
+
+        return $data;
+
+
+    }
+    public function existedPista(int $idPista) : Array {
+        $sql = "SELECT id FROM pista";
+        $stmt = $this->conn->query($sql);
+        $data=[];
+        while($row=$stmt->fetch(PDO::FETCH_ASSOC) ){
+           if($row["id"] === $idPista){
+            $data[]=$row;
+           }
+        }
+      
+
+
+        return $data;
+
+
+    }
+
 
     public function create(array $data) : string {
         $sql = "INSERT INTO reserva (socio , pista , fecha , hora , iluminar) 
